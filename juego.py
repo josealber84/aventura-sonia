@@ -4,29 +4,15 @@ import clases as c
 from os import system
 from sys import exit
 
-global ALTURA
-ALTURA = 400
-
-def config():
-    """Configuración inicial"""
-
-    global ALTURA
-    ALTURA = 400
-
-
-    sonia.mostrar_asterisco()
-
-    global EXPLORAR_BOLSO
-    EXPLORAR_BOLSO = 0
 
 # Sonia -----------------------------------------------------------------------
 
-tiempo = math.ceil(math.sqrt(ALTURA*2/9.8))
-sonia = c.Sonia(tiempo)
+sonia = c.Sonia()
+sonia.set_altura(400) # 400 metros de caída
 
 # Gritar -----------------------------------------------------------------------
 
-gritar = c.accion()
+gritar = c.Accion()
 
 def efecto1(persona):
     print """
@@ -53,7 +39,7 @@ gritar.add_efecto(efecto3, sonia)
 
 # Rezar -----------------------------------------------------------------------
 
-rezar = c.accion()
+rezar = c.Accion()
 
 def efecto1(persona):
     print """
@@ -80,7 +66,7 @@ def efecto3(persona):
     persona.tiempo -= 1
 
 def efecto4(persona):
-    muerte("iluminacion")
+    muerte_iluminacion.run()
 
 rezar.add_efecto(efecto1, sonia)
 rezar.add_efecto(efecto2, sonia)
@@ -89,7 +75,7 @@ rezar.add_efecto(efecto4, sonia)
 
 # Acción desconocida -----------------------------------------------------------
 
-accion_desconocida = c.accion()
+accion_desconocida = c.Accion()
 
 def efecto1():
     print """
@@ -112,6 +98,84 @@ accion_desconocida.add_efecto(efecto1)
 accion_desconocida.add_efecto(efecto2)
 accion_desconocida.add_efecto(efecto3, accion_desconocida)
 
+# Escena intro -----------------------------------------------------------------
+
+descripcion = """
+
+UNA INESPERADA AVENTURA
+
+Las vistas desde los alto del Preikestolen son preciosas.
+
+Estás sentada en el borde, masticando un delicioso sandwich de salchichón.
+J, tumbado en el suelo detrás de ti, te agarra de la camiseta
+pensando que hay posibilidades de que te caigas. Qué mono. Y qué miedica.
+'¿Cómo voy a caerme, si estoy sentada?'
+
+La suave brisa de julio revuelve levemente tu pelo. A lo lejos, una
+ligera niebla difumina el imponente paisaje.
+
+Debajo, rocas afiladas como cuchillas te observan espectantes,
+casi salivando, esperando el próximo traspiés de un turista patoso.
+
+Después de más de media hora en la cima, llega el momento de bajar.
+J está más tranquilo, leyendo su guía en busca de algún sitio donde pasar
+la noche. Le miras y te hace la señal de '¿nos vamos?'. Asientes y guardas
+el papel albal en tu bolso. Te levantas, te pones la chaquetilla rosa y te
+cuelgas el bolso al hombro.
+
+Se escucha un rumor durante dos segundos. No es un sonido desagradable,
+pero todos los presentes os quedáis quietos. El sonido es grave, profundo,
+extraño. Es como si a la montaña le hubiese dado un retortijón.
+J levanta una ceja. 'Es sólo un barco lejano', piensas.
+
+Das dos pasos y el suelo empieza a moverse. ¿Te estás mareando? Te agachas
+para no caerte, pero el movimiento es intenso y tropiezas. Alguien grita:
+"¡TERREMOTOOOOOO!"
+
+Todo parece pasar muy despacio. Mueves hacia atrás el pie izquiedo en busca
+de un apoyo, pero sólo hay aire. El suelo sigue moviéndose. J estira un brazo
+a la desesperada, pero no consigue agarrarte. Caes al vacío. %s metros
+de caída libre te separan de la muerte. Te quedan %s segundos de vida.
+¡A menos que puedas hacer algo!
+
+(Escribe 'ayuda' siempre que haya un asterisco tras tu nombre para ver
+ qué nuevas acciones puedes realizar)
+
+""" % (ALTURA, sonia.tiempo)
+
+intro = Escena(descripcion)
+intro.set_escena_inicial()
+
+# Escena muerte suelo ----------------------------------------------------------
+
+descripcion = """
+Te estampas contra las afiladas rocas del fondo del fiordo.
+Quizás, después de todo, J tenía razón.
+
+FIN
+
+"""
+
+muerte_suelo = Escena(descripcion)
+muerte_suelo.set_escena_final()
+
+# Escena muerte iluminación ----------------------------------------------------
+
+descripcion = """
+Vuelves a rezar. Cada vez estás más tranquila. Aceptas que vas a morir,
+y lo cierto es que no es tan malo como lo pintan. Observas tu entorno
+mientras caes. El mundo es precioso. Hay pequeños pájaros volando cerca
+de ti que no habías visto hasta ahora. Una pequeña nube con forma de
+hoja flota en el inmenso cielo azul. Sonríes. Estás en paz.
+Cierras los ojos.
+
+FIN
+
+"""
+
+muerte_iluminacion = Escena(descripcion)
+muerte_suelo.set_escena_final()
+
 #  -----------------------------------------------------------------------
 
 
@@ -129,85 +193,7 @@ def explorar_bolso():
         No puedes abrir el bolso.
         """
 
-def muerte(tipo_de_muerte):
 
-    if tipo_de_muerte == "suelo":
-        print """
-        Te estampas contra las afiladas rocas del fondo del fiordo.
-        Quizás, después de todo, J tenía razón.
-
-        FIN
-
-        """
-
-    elif tipo_de_muerte == "iluminacion":
-        print """
-        Vuelves a rezar. Cada vez estás más tranquila. Aceptas que vas a morir,
-        y lo cierto es que no es tan malo como lo pintan. Observas tu entorno
-        mientras caes. El mundo es precioso. Hay pequeños pájaros volando cerca
-        de ti que no habías visto hasta ahora. Una pequeña nube con forma de
-        hoja flota en el inmenso cielo azul. Sonríes. Estás en paz.
-        Cierras los ojos.
-
-        FIN
-
-        """
-
-    else:
-        print """
-        Mueres.
-
-        FIN
-        """
-
-    exit(0)
-
-def intro():
-    """Introducción a la historia"""
-
-    system("clear")
-    print """
-
-    UNA INESPERADA AVENTURA
-
-    Las vistas desde los alto del Preikestolen son preciosas.
-
-    Estás sentada en el borde, masticando un delicioso sandwich de salchichón.
-    J, tumbado en el suelo detrás de ti, te agarra de la camiseta
-    pensando que hay posibilidades de que te caigas. Qué mono. Y qué miedica.
-    '¿Cómo voy a caerme, si estoy sentada?'
-
-    La suave brisa de julio revuelve levemente tu pelo. A lo lejos, una
-    ligera niebla difumina el imponente paisaje.
-
-    Debajo, rocas afiladas como cuchillas te observan espectantes,
-    casi salivando, esperando el próximo traspiés de un turista patoso.
-
-    Después de más de media hora en la cima, llega el momento de bajar.
-    J está más tranquilo, leyendo su guía en busca de algún sitio donde pasar
-    la noche. Le miras y te hace la señal de '¿nos vamos?'. Asientes y guardas
-    el papel albal en tu bolso. Te levantas, te pones la chaquetilla rosa y te
-    cuelgas el bolso al hombro.
-
-    Se escucha un rumor durante dos segundos. No es un sonido desagradable,
-    pero todos los presentes os quedáis quietos. El sonido es grave, profundo,
-    extraño. Es como si a la montaña le hubiese dado un retortijón.
-    J levanta una ceja. 'Es sólo un barco lejano', piensas.
-
-    Das dos pasos y el suelo empieza a moverse. ¿Te estás mareando? Te agachas
-    para no caerte, pero el movimiento es intenso y tropiezas. Alguien grita:
-    "¡TERREMOTOOOOOO!"
-
-    Todo parece pasar muy despacio. Mueves hacia atrás el pie izquiedo en busca
-    de un apoyo, pero sólo hay aire. El suelo sigue moviéndose. J estira un brazo
-    a la desesperada, pero no consigue agarrarte. Caes al vacío. %s metros
-    de caída libre te separan de la muerte. Te quedan %s segundos de vida.
-    ¡A menos que puedas hacer algo!
-
-    (Escribe 'ayuda' siempre que haya un asterisco tras tu nombre para ver
-     qué nuevas acciones puedes realizar)
-
-    """ % (ALTURA, sonia.tiempo)
 def estado0():
     """Cayendo al vacío. No sabes nada"""
 
@@ -406,14 +392,14 @@ def jugar():
   """Ejecuta esta función para que comience el juego"""
 
   config()
-  intro()
+  intro.run()
   estado0()
   estado1()
   estado2()
   estado3()
   estado4()
 
-  if(TIEMPO <= 0):
-      muerte("suelo")
+  if(sonia.tiempo <= 0):
+      muerte_suelo.run()
 
 jugar()
